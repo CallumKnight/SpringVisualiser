@@ -2,6 +2,11 @@
 
 #include "ofMain.h"
 
+typedef struct coord{
+	double x;
+	double y;
+} Coord;
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -20,5 +25,8 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+	
+	private:
+		double springLength;
+		int8_t lengthAdjust;
 };
