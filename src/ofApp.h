@@ -46,5 +46,4 @@ class ofApp : public ofBaseApp{
 		// Fluid parameters
 		double dampingCoef;
 		std::vector<Atom> atoms;
-		uint8_t atomAdjust;
 };

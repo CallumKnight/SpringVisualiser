@@ -13,11 +13,9 @@ void ofApp::setup(){
 
     // Initialise fluid parameters
     dampingCoef = 1;
-    atomAdjust = 1;
 
     // Initialise atom positions to represent fluid
-    uint8_t numberOfAtoms = static_cast<uint8_t>((rand() % 5 + 1) * dampingCoef);
-    for(uint8_t i = 0; i < numberOfAtoms; i++)
+    for(uint8_t i = 0; i < static_cast<uint8_t>(dampingCoef * 5); i++)
     {
         // Generate random initial position
         Atom atom;
