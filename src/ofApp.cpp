@@ -1,27 +1,66 @@
 #include "ofApp.h"
+#include <cstdlib>
 
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    springLength = ofGetHeight()/2.0;
+    // Initialise spring parameters
+    springStart = {ofGetWidth()/2.0, ofGetHeight()/4.0};
+    springLength = ofGetHeight()/4.0;
+    springWidth = ofGetWidth()/8.0; 
+    numCoils = 4;
     lengthAdjust = 1;
+
+    // Initialise fluid parameters
+    dampingCoef = 1;
+    atomAdjust = 1;
+
+    // Initialise atom positions to represent fluid
+    uint8_t numberOfAtoms = static_cast<uint8_t>((rand() % 5 + 1) * dampingCoef);
+    for(uint8_t i = 0; i < numberOfAtoms; i++)
+    {
+        // Generate random initial position
+        Atom atom;
+        atom.pos.x = rand() % (ofGetWidth()/2) + (ofGetWidth()/4);
+        atom.pos.y = rand() % (ofGetHeight()/2) + (ofGetHeight()/4);
+        atom.radius = 1.0;
+        atoms.push_back(atom);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
     // Adjust direction of spring movement if limits reached
-    if(springLength > (3.0*ofGetHeight()/5.0))
+    if(springLength > (3.0*ofGetHeight()/8.0))
     {
         lengthAdjust = -1;
     }
-    else if(springLength < (2.0*ofGetHeight()/5.0))
+    else if(springLength < (ofGetHeight()/8.0))
     {
         lengthAdjust = 1;
     }
 
     // Adjust spring length
     springLength += lengthAdjust;
+
+    // Adjust position of atoms
+    for(auto &atom : atoms)
+    {
+        atom.pos.x++;
+        atom.pos.y++;
+        
+        if(atom.pos.x > 3.0*(ofGetWidth()/4.0))
+        {
+            atom.pos.x = ofGetWidth()/4.0;
+            atom.pos.y = rand() % (ofGetHeight()/2) + (ofGetHeight()/4);
+        }
+        if(atom.pos.y > 3.0*(ofGetHeight()/4.0))
+        {
+            atom.pos.x = rand() % (ofGetWidth()/2) + (ofGetWidth()/4);
+            atom.pos.y = ofGetHeight()/4.0;
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -36,16 +75,14 @@ void ofApp::draw(){
                lineEnd.x,
                lineStart.y);
 
-    // Initialise spring dimensions
-    uint8_t numCoils = 4;
-    // double springLength = ofGetHeight()/2.0;
-    double springWidth = ofGetWidth()/8.0; // Can have it depend on spring length later
-    Coord springStart = {ofGetWidth()/2.0, ofGetHeight()/4.0};
-    Coord springEnd = {ofGetWidth()/2.0, springStart.y + springLength};
+    // Draw atoms
+    for(auto &atom : atoms)
+    {
+        ofDrawCircle(atom.pos.x, atom.pos.y, atom.radius);
+    }
     
-    // Create Polyline to represent spring
+    // Draw spring
     ofPolyline spring;
-
     for(uint8_t i = 0; i < numCoils; i++)
     {
         double coilLength = springLength/numCoils;
@@ -62,12 +99,10 @@ void ofApp::draw(){
         if(i == numCoils - 1)
         {
             // Add vertices for end point of spring
-            spring.addVertex(springStart.x - coilHorOffset, springEnd.y, 0);
-            spring.addVertex(springStart.x + coilHorOffset, springEnd.y, 0);
+            spring.addVertex(springStart.x - coilHorOffset, springStart.y + springLength, 0);
+            spring.addVertex(springStart.x + coilHorOffset, springStart.y + springLength, 0);
         }
     }
-
-    // Draw spring
     spring.draw();
 }
 
