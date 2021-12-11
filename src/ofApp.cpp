@@ -5,17 +5,18 @@
 void ofApp::setup(){
 
     // Initialise spring parameters
+    springConstant = 1;
     springStart = {ofGetWidth()/2.0, ofGetHeight()/4.0};
     springLength = ofGetHeight()/4.0;
     springWidth = ofGetWidth()/8.0; 
     numCoils = 4;
-    lengthAdjust = 1;
+    position = 1;
+    velocity = 0;
 
     // Initialise fluid parameters
-    dampingCoef = 1;
+    dampingCoef = 0.05;
 
-    // Initialise atom positions to represent fluid
-    for(uint8_t i = 0; i < static_cast<uint8_t>(dampingCoef * 5); i++)
+    for(uint8_t i = 0; i < static_cast<uint8_t>(dampingCoef * 100); i++)
     {
         // Generate random initial position
         Atom atom;
@@ -24,25 +25,40 @@ void ofApp::setup(){
         atom.radius = 1.0;
         atoms.push_back(atom);
     }
+
+    // Initialise mass parameters
+    mass = 1;
+
+    // Initialise applied force
+    force = 0;
+
+    // Calculate acceleration based on initial conditions
+    acceleration = (-1*(springConstant/mass)*position) - ((dampingCoef/mass)*velocity) + ((1/mass)*force);
+
+    // Start timer for measuring elapsed time
+    time = std::chrono::steady_clock::now();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
-    // Adjust direction of spring movement if limits reached
-    if(springLength > (3.0*ofGetHeight()/8.0))
-    {
-        lengthAdjust = -1;
-    }
-    else if(springLength < (ofGetHeight()/8.0))
-    {
-        lengthAdjust = 1;
-    }
+    // Calculate elapsed time
+    std::chrono::steady_clock::time_point updatedTime = std::chrono::steady_clock::now();
+    double elapsedTimeSec = (std::chrono::duration_cast<std::chrono::milliseconds>(updatedTime - time).count())/1000.0;
+    
+    // Update spring position
+    velocity = velocity + (acceleration*elapsedTimeSec);
+    position = position + (velocity*elapsedTimeSec);
+    force = 0;
+    acceleration = (-1*(springConstant/mass)*position) - ((dampingCoef/mass)*velocity) + ((1/mass)*force);
+
+    // Update time
+    time = std::chrono::steady_clock::now();
 
     // Adjust spring length
-    springLength += lengthAdjust;
+    springLength += position;
 
-    // Adjust position of atoms
+    // Update atom positions
     for(auto &atom : atoms)
     {
         atom.pos.x++;
@@ -88,18 +104,13 @@ void ofApp::draw(){
         double coilHorOffset = 0.5*springWidth;
 
         // Add vertices to polyline for each coil
+        // (Need to update spring dimensions in update function so that it's position 
+        // within the window will be adjusted if window size is changed)
         spring.addVertex(ofVec3f(springStart.x, springStart.y + coilVertOffset, 0));
         spring.addVertex(ofVec3f(springStart.x - coilHorOffset, springStart.y + coilVertOffset + (coilLength/4), 0));
         spring.addVertex(ofVec3f(springStart.x, springStart.y + coilVertOffset + (2*coilLength/4), 0));
         spring.addVertex(ofVec3f(springStart.x + coilHorOffset, springStart.y + coilVertOffset + (3*coilLength/4), 0));
         spring.addVertex(ofVec3f(springStart.x, springStart.y + coilVertOffset + coilLength, 0));
-    
-        // if(i == numCoils - 1)
-        // {
-        //     // Add vertices for end point of spring
-        //     spring.addVertex(springStart.x - coilHorOffset, springStart.y + springLength, 0);
-        //     spring.addVertex(springStart.x + coilHorOffset, springStart.y + springLength, 0);
-        // }
     }
     spring.draw();
 

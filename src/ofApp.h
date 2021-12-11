@@ -5,6 +5,7 @@
 
 #include "ofMain.h"
 #include <vector>
+#include <chrono>
 
 typedef struct coord{
 	double x;
@@ -37,13 +38,27 @@ class ofApp : public ofBaseApp{
 	
 	private:
 		// Spring parameters
+		double springConstant;
 		Coord springStart;
 		double springLength;
 		double springWidth;
 		uint8_t numCoils;
-		int8_t lengthAdjust;
+		// int8_t lengthAdjust;
+		double position;
+		double velocity;
+		double acceleration;
 		
 		// Fluid parameters
 		double dampingCoef;
 		std::vector<Atom> atoms;
+
+		// Mass parameters
+		double mass;
+
+		// Applied force
+		double force;
+
+		// Time
+		std::chrono::steady_clock::time_point time;
+
 };
