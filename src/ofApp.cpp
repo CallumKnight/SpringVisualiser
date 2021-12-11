@@ -94,14 +94,17 @@ void ofApp::draw(){
         spring.addVertex(ofVec3f(springStart.x + coilHorOffset, springStart.y + coilVertOffset + (3*coilLength/4), 0));
         spring.addVertex(ofVec3f(springStart.x, springStart.y + coilVertOffset + coilLength, 0));
     
-        if(i == numCoils - 1)
-        {
-            // Add vertices for end point of spring
-            spring.addVertex(springStart.x - coilHorOffset, springStart.y + springLength, 0);
-            spring.addVertex(springStart.x + coilHorOffset, springStart.y + springLength, 0);
-        }
+        // if(i == numCoils - 1)
+        // {
+        //     // Add vertices for end point of spring
+        //     spring.addVertex(springStart.x - coilHorOffset, springStart.y + springLength, 0);
+        //     spring.addVertex(springStart.x + coilHorOffset, springStart.y + springLength, 0);
+        // }
     }
     spring.draw();
+
+    // Draw mass
+    ofDrawRectangle(springStart.x - (0.5*springWidth), springStart.y + springLength, 0, springWidth, ofGetWidth()/8);
 }
 
 //--------------------------------------------------------------
