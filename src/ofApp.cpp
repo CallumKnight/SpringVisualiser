@@ -137,11 +137,34 @@ void ofApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
 
+    // May want to do this when mouse released, and just have it draw new location when mouse pressed.
+    // Can add a mouse pressed flag, and only have it update position in update function when that flag is false.
+    // When releasing mouse that flag will become false again.
+    
+    if(ofGetMouseY() < (ofGetHeight()/4))
+    {
+        springLength = 0;
+        position = springLength - (ofGetHeight()/4);
+    }
+    else if(ofGetMouseY() > (3*(ofGetHeight()/4)))
+    {
+        springLength = ofGetHeight()/2;
+        position = springLength - (ofGetHeight()/4);
+    }
+    else
+    {
+        springLength = ofGetMouseY() - (ofGetHeight()/4);
+        position = springLength - (ofGetHeight()/4);
+    }
+    velocity = 0;
+    force = 0;
+    acceleration = (-1*(springConstant/mass)*position) - ((dampingCoef/mass)*velocity) + ((1/mass)*force);
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
 
+    time = std::chrono::steady_clock::now();
 }
 
 //--------------------------------------------------------------
