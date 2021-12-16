@@ -39,14 +39,10 @@ class ofApp : public ofBaseApp{
 	private:
 		// Spring parameters
 		double springConstant;
-		Coord springStart;
-		double springLength;
-		double springWidth;
-		uint8_t numCoils;
-		// int8_t lengthAdjust;
 		double position;
 		double velocity;
 		double acceleration;
+		double springLength;
 		
 		// Fluid parameters
 		double dampingCoef;

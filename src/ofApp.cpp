@@ -6,16 +6,12 @@ void ofApp::setup(){
 
     // Initialise spring parameters
     springConstant = 1;
-    springStart = {ofGetWidth()/2.0, ofGetHeight()/4.0};
-    springLength = ofGetHeight()/4.0;
-    springWidth = ofGetWidth()/8.0; 
-    numCoils = 4;
-    position = 1;
+    position = 100;
     velocity = 0;
+    springLength = ofGetHeight()/4.0 + position;
 
     // Initialise fluid parameters
     dampingCoef = 0.05;
-
     for(uint8_t i = 0; i < static_cast<uint8_t>(dampingCoef * 100); i++)
     {
         // Generate random initial position
@@ -32,7 +28,7 @@ void ofApp::setup(){
     // Initialise applied force
     force = 0;
 
-    // Calculate acceleration based on initial conditions
+    // Calculate initial acceleration
     acceleration = (-1*(springConstant/mass)*position) - ((dampingCoef/mass)*velocity) + ((1/mass)*force);
 
     // Start timer for measuring elapsed time
@@ -51,12 +47,10 @@ void ofApp::update(){
     position = position + (velocity*elapsedTimeSec);
     force = 0;
     acceleration = (-1*(springConstant/mass)*position) - ((dampingCoef/mass)*velocity) + ((1/mass)*force);
+    springLength = (ofGetHeight()/4.0) + position;
 
     // Update time
     time = std::chrono::steady_clock::now();
-
-    // Adjust spring length
-    springLength += position;
 
     // Update atom positions
     for(auto &atom : atoms)
@@ -89,13 +83,17 @@ void ofApp::draw(){
                lineEnd.x,
                lineStart.y);
 
-    // Draw atoms
+    // Draw fluid
     for(auto &atom : atoms)
     {
         ofDrawCircle(atom.pos.x, atom.pos.y, atom.radius);
     }
     
     // Draw spring
+    Coord springStart = {ofGetWidth()/2.0, ofGetHeight()/4.0};
+    double springWidth = ofGetWidth()/8.0;
+    uint8_t numCoils = 4;
+
     ofPolyline spring;
     for(uint8_t i = 0; i < numCoils; i++)
     {
@@ -104,11 +102,9 @@ void ofApp::draw(){
         double coilHorOffset = 0.5*springWidth;
 
         // Add vertices to polyline for each coil
-        // (Need to update spring dimensions in update function so that it's position 
-        // within the window will be adjusted if window size is changed)
         spring.addVertex(ofVec3f(springStart.x, springStart.y + coilVertOffset, 0));
         spring.addVertex(ofVec3f(springStart.x - coilHorOffset, springStart.y + coilVertOffset + (coilLength/4), 0));
-        spring.addVertex(ofVec3f(springStart.x, springStart.y + coilVertOffset + (2*coilLength/4), 0));
+        spring.addVertex(ofVec3f(springStart.x, springStart.y + coilVertOffset + (coilLength/2), 0));
         spring.addVertex(ofVec3f(springStart.x + coilHorOffset, springStart.y + coilVertOffset + (3*coilLength/4), 0));
         spring.addVertex(ofVec3f(springStart.x, springStart.y + coilVertOffset + coilLength, 0));
     }
