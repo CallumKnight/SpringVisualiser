@@ -171,7 +171,6 @@ void ofApp::draw(){
                    ofGetHeight()/8.0);
         lineLength += dashLength + dashSpacing;
     }while(lineLength < (ofGetWidth()/2));
-    
 }
 
 //--------------------------------------------------------------
