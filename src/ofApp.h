@@ -54,10 +54,11 @@ class ofApp : public ofBaseApp{
 		// Applied force
 		double force;
 
+		// Plot coordinates
+		std::vector<Particle> plotCoordinates; 
+		ofPolyline plot;
+
 		// Time
 		std::chrono::steady_clock::time_point time;
-
-		// User Input
-		bool mousePressed();
 
 };

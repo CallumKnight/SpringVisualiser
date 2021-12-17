@@ -3,15 +3,15 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
+    
     // Initialise spring parameters
-    springConstant = 1;
-    position = 100;
+    springConstant = 10;
+    position = 0;
     velocity = 0;
     springLength = ofGetHeight()/4.0 + position;
 
     // Initialise fluid parameters
-    dampingCoef = 0.05;
+    dampingCoef = 0.5;
     for(uint8_t i = 0; i < static_cast<uint8_t>(dampingCoef * 100); i++)
     {
         // Generate random initial position for fluid particles
@@ -30,6 +30,10 @@ void ofApp::setup(){
 
     // Calculate initial acceleration
     acceleration = (-1*(springConstant/mass)*position) - ((dampingCoef/mass)*velocity) + ((1/mass)*force);
+
+    // Initialise plot coordinate
+    Particle plotCoordinate = {ofGetWidth()/2.0, (ofGetHeight()/8.0) + (position/4.0), 0.5};
+    plotCoordinates.push_back(plotCoordinate);
 
     // Start timer for measuring elapsed time
     time = std::chrono::steady_clock::now();
@@ -94,20 +98,30 @@ void ofApp::update(){
                 particle.pos.y = ofGetHeight()/4.0;
             }
         }
+
+        // Update plot coordinates
+        for(auto& coordinate : plotCoordinates)
+        {
+            coordinate.pos.x--;
+            if(coordinate.pos.x < ofGetWidth()/4.0)
+            {
+                plotCoordinates.erase(plotCoordinates.begin());
+            }
+        }
+        // Add new coordinate to plot
+        Particle plotCoordinate = {ofGetWidth()/2.0, (ofGetHeight()/8.0) + (position/4.0), 0.5};
+        plotCoordinates.push_back(plotCoordinate);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+    
     // Draw spring mounting point
-    Coord lineStart = {ofGetWidth()/4.0, ofGetHeight()/4.0};
-    Coord lineEnd = {3.0*(ofGetWidth()/4.0), ofGetHeight()/4.0};
-
-    ofDrawLine(lineStart.x,
-               lineStart.y,
-               lineEnd.x,
-               lineStart.y);
+    ofDrawLine(ofGetWidth()/4.0,
+               ofGetHeight()/4.0,
+               3.0*(ofGetWidth()/4.0),
+               ofGetHeight()/4.0);
 
     // Draw fluid
     for(auto &particle : particles)
@@ -135,10 +149,29 @@ void ofApp::draw(){
         spring.addVertex(ofVec3f(springStart.x, springStart.y + coilVertOffset + coilLength, 0));
     }
     spring.draw();
-
+    
     // Draw mass
     ofNoFill();
     ofDrawRectangle(springStart.x - (0.5*springWidth), springStart.y + springLength, 0, springWidth, ofGetWidth()/16);
+
+    // Draw plot
+    ofFill();
+    for(auto& coordinate : plotCoordinates)
+    {
+        ofDrawCircle(coordinate.pos.x, coordinate.pos.y, coordinate.radius);
+    }
+    double lineLength = 0.0;
+    double dashLength = 5.0;
+    double dashSpacing = 10.0;
+    do
+    {
+        ofDrawLine((ofGetWidth()/4.0) + lineLength,
+                   ofGetHeight()/8.0,
+                   (ofGetWidth()/4.0) + lineLength + dashLength,
+                   ofGetHeight()/8.0);
+        lineLength += dashLength + dashSpacing;
+    }while(lineLength < (ofGetWidth()/2));
+    
 }
 
 //--------------------------------------------------------------
