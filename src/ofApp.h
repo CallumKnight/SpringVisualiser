@@ -12,10 +12,10 @@ typedef struct coord{
 	double y;
 } Coord;
 
-typedef struct atom{
+typedef struct particle{
 	Coord pos;
 	double radius;
-} Atom;
+} Particle;
 
 class ofApp : public ofBaseApp{
 
@@ -46,7 +46,7 @@ class ofApp : public ofBaseApp{
 		
 		// Fluid parameters
 		double dampingCoef;
-		std::vector<Atom> atoms;
+		std::vector<Particle> particles;
 
 		// Mass parameters
 		double mass;
@@ -56,5 +56,8 @@ class ofApp : public ofBaseApp{
 
 		// Time
 		std::chrono::steady_clock::time_point time;
+
+		// User Input
+		bool mousePressed();
 
 };
