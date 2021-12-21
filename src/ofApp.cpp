@@ -118,18 +118,27 @@ void ofApp::update(){
 void ofApp::draw(){
     
     // Draw spring mounting point
+    ofColor green(0, 255, 0);
+    ofSetColor(green);
+
     ofDrawLine(ofGetWidth()/4.0,
                ofGetHeight()/4.0,
                3.0*(ofGetWidth()/4.0),
                ofGetHeight()/4.0);
 
     // Draw fluid
+    ofColor lightBlue(50, 150, 255);
+    ofSetColor(lightBlue);
+    
     for(auto &particle : particles)
     {
         ofDrawCircle(particle.pos.x, particle.pos.y, particle.radius);
     }
     
     // Draw spring
+    ofColor red(255, 0, 0);
+    ofSetColor(red);
+
     Coord springStart = {ofGetWidth()/2.0, ofGetHeight()/4.0};
     double springWidth = ofGetWidth()/8.0;
     uint8_t numCoils = 4;
@@ -155,6 +164,8 @@ void ofApp::draw(){
     ofDrawRectangle(springStart.x - (0.5*springWidth), springStart.y + springLength, 0, springWidth, ofGetWidth()/16);
 
     // Draw plot
+    ofColor white(255, 255, 255);
+    ofSetColor(white);
     ofFill();
 
     for(auto& coordinate : plotCoordinates)
