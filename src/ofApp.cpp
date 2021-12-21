@@ -156,20 +156,22 @@ void ofApp::draw(){
 
     // Draw plot
     ofFill();
+
     for(auto& coordinate : plotCoordinates)
     {
         ofDrawCircle(coordinate.pos.x, coordinate.pos.y, coordinate.radius);
     }
+
     double lineLength = 0.0;
-    double dashLength = 5.0;
-    double dashSpacing = 10.0;
+    double dashLength = ofGetWidth()/200;
+    
     do
     {
         ofDrawLine((ofGetWidth()/4.0) + lineLength,
                    ofGetHeight()/8.0,
                    (ofGetWidth()/4.0) + lineLength + dashLength,
                    ofGetHeight()/8.0);
-        lineLength += dashLength + dashSpacing;
+        lineLength += 2*dashLength;
     }while(lineLength < (ofGetWidth()/2));
 }
 
